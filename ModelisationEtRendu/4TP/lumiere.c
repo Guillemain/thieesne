@@ -288,9 +288,7 @@ void special (int key, int x, int y)
 		case GLUT_KEY_PAGE_UP:
 			distance -= (distance>DISTANCE_MIN)? DELTA_DISTANCE: 0.0;
 		break;
-		case 't':
-			realistic = -realistic + 1;
-		break;
+
 
 		default: break;
 	}
@@ -331,6 +329,9 @@ void keyboard (unsigned char key, int x, int y)
 		case 'q':
 		case 27: // [ESC]
 			exit(0);
+		break;
+		case 't':
+			realistic = -realistic + 1;
 		break;
 		default:
         break;

@@ -24,6 +24,50 @@ static GLubyte checkImage[checkImageHeight][checkImageWidth][4];
 
 static GLuint texName;
 
+
+/*
+ * Callback for special keys
+ */
+#define DELTA_ANGLE_X	5
+#define DELTA_ANGLE_Y	5
+#define DELTA_DISTANCE	0.3
+#define DISTANCE_MIN	0.0
+int angle_x=45, angle_y=-45;
+float distance = 8;
+void special (int key, int x, int y)
+{
+	switch (key) {
+		case GLUT_KEY_UP:
+			angle_x = (angle_x + DELTA_ANGLE_X) % 360;
+		break;
+		case GLUT_KEY_DOWN:
+			angle_x = (angle_x - DELTA_ANGLE_X) % 360;
+		break;
+		case GLUT_KEY_LEFT:
+			angle_y = (angle_y + DELTA_ANGLE_Y) % 360;
+		break;
+		case GLUT_KEY_RIGHT:
+			angle_y = (angle_y - DELTA_ANGLE_Y) % 360;
+		break;
+		case GLUT_KEY_PAGE_DOWN:
+			distance += DELTA_DISTANCE;
+		break;
+		case GLUT_KEY_PAGE_UP:
+			distance -= (distance>DISTANCE_MIN)? DELTA_DISTANCE: 0.0;
+		break;
+
+		default: break;
+	}
+	glutPostRedisplay();
+}
+
+void place_camera ()
+{
+	glTranslatef (0, 0, -distance);
+	glRotatef (angle_x, 1, 0, 0);
+	glRotatef (angle_y, 0, 1, 0);
+}
+
 void makeCheckImage(void)
 {
    int i, j, c;
@@ -64,7 +108,15 @@ void init(void)
 
 void display(void)
 {
+
+
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	//place the camera
+	place_camera ();
+      glutSwapBuffers ();
    glEnable(GL_TEXTURE_2D);
    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
    glBindTexture(GL_TEXTURE_2D, texName);
@@ -115,6 +167,7 @@ int main(int argc, char** argv)
    init();
    glutDisplayFunc(display);
    glutReshapeFunc(reshape);
+   glutSpecialFunc (special);
    glutKeyboardFunc(keyboard);
    printf("%s\n", glGetString(GL_VERSION));
    glutMainLoop();

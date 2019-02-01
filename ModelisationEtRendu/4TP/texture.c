@@ -46,23 +46,28 @@ GLuint load_texture (char * ppm_file)
 	//**********************************
 	// generate and bind the texture
 	//**********************************
-
-
+	glGenTextures(1, &texture);
+  	glBindTexture(GL_TEXTURE_2D, texture);
 
 	//**********************************
 	// set the texture parameter for the repetition (clamp)
 	//**********************************
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	//**********************************
 	// set the texture parameter for the interpolation (nearest pixel)
 	//**********************************
-
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+                   GL_NEAREST);
+   	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+                   GL_NEAREST);
 
 	//**********************************
 	// load the texture from file, see load_ppm
 	//**********************************
-
+	
 
 	//**********************************
 	// load the texture in opengl from "image"
