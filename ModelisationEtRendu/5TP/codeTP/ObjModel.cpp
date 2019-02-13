@@ -107,17 +107,15 @@ int ObjModel::load( char* filename )
                 //*********************************************************************
                 //  Compute the normal of the face
                 //*********************************************************************
-                //(_vertices(t.v2) - _vertices(t.v1)) * ()
-
+                vec3d normalOfFace;
+                computeNormal(_vertices[t.v1],_vertices[t.v2],_vertices[t.v3],normalOfFace);
 
                 //*********************************************************************
                 // Sum the normal of the face to each vertex normal
                 //*********************************************************************
-
-
-
-
-
+                _normals[t.v1] += normalOfFace;
+                _normals[t.v2] += normalOfFace;
+                _normals[t.v3] += normalOfFace;
             }
         }
 
@@ -129,11 +127,10 @@ int ObjModel::load( char* filename )
         //*********************************************************************
         // normalize the normals of each vertex
         //*********************************************************************
-
-
-
-
-
+        uint i;
+        for(i = 0; i < _vertices.size(); i++){
+            _normals[i].norm();
+        }
 //        PRINTVAR( _normals );
 
         // Close OBJ file
@@ -249,26 +246,21 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
     //**************************************************
     // for each face
     //**************************************************
-
+    glBegin(GL_TRIANGLES);
+    for (const face f : _mesh)
     {
         //**************************************************
         // Compute the normal to the face and then draw the
         // faces as GL_TRIANGLES assigning the proper normal
         //**************************************************
-
-
-
-
-
-
-
-
-
-
-
-
-
+        vec3d normal;
+        computeNormal(vertices[f.v1],vertices[f.v2],vertices[f.v3],normal);
+        glNormal3fv((float *) & normal);
+        glVertex3fv((float *) & vertices[f.v1]);
+        glVertex3fv((float *) & vertices[f.v2]);
+        glVertex3fv((float *) & vertices[f.v3]);
     }
+    glEnd();
 }
 
 
@@ -297,22 +289,23 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
     //****************************************
     // Enable vertex arrays
     //****************************************
+    glEnableClientState(GL_VERTEX_ARRAY);
 
 
     //****************************************
     // Enable normal arrays
     //****************************************
-
+    glEnableClientState(GL_NORMAL_ARRAY);
 
     //****************************************
     // Normal pointer to normal array
     //****************************************
-
+    //void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer) TO DO
 
     //****************************************
     // Vertex pointer to Vertex array
     //****************************************
-
+    //
 
     //****************************************
     // Draw the faces
