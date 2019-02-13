@@ -61,6 +61,9 @@ float fov = 60.0f;
 int depth = 0;
 
 
+// for loops
+int i;
+
 // function that draws a triangle of vertices v1 v2 v3
 void drawtriangle(float v1[3], float v2[3], float v3[3])
 {
@@ -70,14 +73,26 @@ void drawtriangle(float v1[3], float v2[3], float v3[3])
 	// triangles, let's say a mild grey (50%)
 	//*******************************
 
+	glColor3f(0.5f,0.5f,0.5f);
 
 	//*******************************
 	// draw the triangle using the 3 vertices
 	//*******************************
 
+	glBegin(GL_LINE_LOOP);
+		glVertex3fv(v1);
+		glVertex3fv(v2);
+		glVertex3fv(v3);
+	glEnd();
 
 
-
+	glColor3f(1.0f,0.0f,0.0f);
+	glLineWidth(3.0f);
+	glBegin(GL_POINTS);
+		glVertex3fv(v1);
+		glVertex3fv(v2);
+		glVertex3fv(v3);
+	glEnd();
 
 }
 
@@ -88,12 +103,15 @@ void normalize(float v[3])
 	// compute the norm of the vector
 	//*******************************
 
+	float norm = sqrtf(powf(v[0],2.0)+powf(v[1],2.0)+powf(v[2],2.0));
 
 	//*******************************
 	// normalize the vector
 	//*******************************
 
-
+	for (i=0;i<3;i++) {
+		v[i] = v[i]/norm;
+	}
 
 
 }
@@ -111,13 +129,20 @@ void subdivide(float v1[3], float v2[3], float v3[3])
 	// compute the 3 midpoints of each edge of the triangle
 	//*******************************
 
-
+	for (i=0;i<3;i++) {
+		v12[i] = (v1[i]+v2[i])/2;
+		v23[i] = (v2[i]+v3[i])/2;
+		v31[i] = (v3[i]+v1[i])/2;
+	}
 
 
 	//*******************************
 	// projects the 3 midpoints on the unitary sphere, \ie normalize them
 	//*******************************
 
+	normalize(v12);
+	normalize(v23);
+	normalize(v31);
 
 
 
@@ -126,7 +151,10 @@ void subdivide(float v1[3], float v2[3], float v3[3])
 	// respect the counter-clockwise order
 	//*******************************
 
-
+	drawtriangle(v1,v12,v31);
+	drawtriangle(v12,v23,v31);
+	drawtriangle(v31,v23,v3);
+	drawtriangle(v12,v2,v23);
 
 
 
@@ -143,7 +171,9 @@ void recursiveSubdivision(float v1[3], float v2[3], float v3[3], long depth)
 	// Remember: when if depth = 0 is passed, we just want to see the icosahedron
 	//*******************************
 
-
+	if (depth == 0.0) {
+		drawtriangle(v1,v2,v3);
+	} else {
 
 
 
@@ -151,15 +181,20 @@ void recursiveSubdivision(float v1[3], float v2[3], float v3[3], long depth)
 	// compute the 3 midpoints of each edge of the triangle
 	//*******************************
 
-
-
+	for (i=0;i<3;i++) {
+		v12[i] = (v1[i]+v2[i])/2;
+		v23[i] = (v2[i]+v3[i])/2;
+		v31[i] = (v3[i]+v1[i])/2;
+	}
 
 
 	//*******************************
 	// projects the 3 midpoints on the unitary sphere, \ie normalize them
 	//*******************************
 
-
+	normalize(v12);
+	normalize(v23);
+	normalize(v31);
 
 
 
@@ -167,8 +202,12 @@ void recursiveSubdivision(float v1[3], float v2[3], float v3[3], long depth)
 	// recursive step on the for new faces
 	//*******************************
 
+	recursiveSubdivision(v1,v12,v31,depth-1);
+	recursiveSubdivision(v12,v23,v31,depth-1);
+	recursiveSubdivision(v31,v23,v3,depth-1);
+	recursiveSubdivision(v12,v2,v23,depth-1);
 
-
+	}
 
 
 }
@@ -193,7 +232,10 @@ void display ()
 		//*******************************
 		// Draw stuff here
 		//*******************************
-
+		int i;
+		for (i=0;i<NUMTRIANGLES;i++) {
+			recursiveSubdivision(vertices[vIndices[i][0]],vertices[vIndices[i][1]],vertices[vIndices[i][2]],depth);
+		}
 
 
 
