@@ -18,7 +18,7 @@ set(gca,'FontSize',20);
 xlabel('$d$','Interpreter','Latex','FontSize',30);
 ylabel('$VC$','Interpreter','Latex','FontSize',30);
 
-% Estimation du degre d et de l'ecart-type sigma :
+% % Estimation du degre d et de l'ecart-type sigma :
 [d_estime,sigma_estime] = estimation_2_d_sigma(liste_d,liste_VC);
 fprintf('Estimation du degre : d = %d\n',d_estime);
 fprintf('Estimation de l''ecart-type du bruit sur les donnees : %.3f\n',sigma_estime);
