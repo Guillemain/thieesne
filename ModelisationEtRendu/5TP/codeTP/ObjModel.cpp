@@ -113,9 +113,10 @@ int ObjModel::load( char* filename )
                 //*********************************************************************
                 // Sum the normal of the face to each vertex normal
                 //*********************************************************************
-                _normals[t.v1] += normalOfFace;
-                _normals[t.v2] += normalOfFace;
-                _normals[t.v3] += normalOfFace;
+                float angle = angleAtVertex(_vertices.at(t.v1),_vertices.at(t.v2),_vertices.at(t.v3));
+                _normals[t.v1] += normalOfFace*angle;
+                _normals[t.v2] += normalOfFace*angle;
+                _normals[t.v3] += normalOfFace*angle;
             }
         }
 
@@ -300,27 +301,25 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
     //****************************************
     // Normal pointer to normal array
     //****************************************
-    //void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer) TO DO
-
+    glNormalPointer(GL_FLOAT,0,&vertexNormals.at(0));
     //****************************************
     // Vertex pointer to Vertex array
     //****************************************
-    //
-
+    glVertexPointer(3,GL_FLOAT,0,&vertices.at(0)); 
     //****************************************
     // Draw the faces
     //****************************************
 
-
+     glDrawElements(GL_TRIANGLES,3*mesh.size(),GL_UNSIGNED_INT,&mesh.at(0));
     //****************************************
     // Disable vertex arrays
     //****************************************
-
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     //****************************************
     // Disable normal arrays
     //****************************************
-
+    glDisableClientState(GL_NORMAL_ARRAY);
 
 }
 
