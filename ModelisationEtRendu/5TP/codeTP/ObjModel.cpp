@@ -354,20 +354,27 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     //*********************************************************************
     // for each face
     //*********************************************************************
-
+    for (auto &f : origMesh)
     {
         //*********************************************************************
         // get the indices of the triangle vertices
         //*********************************************************************
-
-
+        
+        idxtype v1 = f.v1;
+        idxtype v2 = f.v2;
+        idxtype v3 = f.v3;
+       
 
 
         //*********************************************************************
         // for each edge get the index of the vertex of the midpoint using getNewVertex
         //*********************************************************************
-
-
+        edge e12 (v1,v2);
+        edge e23 (v2,v3);
+        edge e13 (v1,v3);
+        idxtype a = getNewVertex(e12,destVert,origMesh,newVertices);
+        idxtype b = getNewVertex(e23,destVert,origMesh,newVertices);
+        idxtype c = getNewVertex(e13,destVert,origMesh,newVertices);
 
 
         //*********************************************************************
@@ -387,6 +394,15 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
         // hence v1-a-c, a-b-c and so on
         //*********************************************************************
 
+        face tr1 (v1,a,c);
+        face tr2 (a,v2,b);
+        face tr3 (c,b,v3);
+        face tr4 (a,b,c);
+
+        destMesh.push_back(tr1);
+        destMesh.push_back(tr2);
+        destMesh.push_back(tr3);
+        destMesh.push_back(tr4);
 
 
 
@@ -413,6 +429,8 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     // for each face
     //*********************************************************************
 
+    for (auto &f : origMesh)
+
     {
         //*********************************************************************
         // consider each of the 3 vertices:
@@ -422,13 +440,38 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
         // how many times each vertex is summed in the general case...
         //*********************************************************************
 
+        idxtype v1 = f.v1;
+        idxtype v2 = f.v2;
+        idxtype v3 = f.v3;       
 
+        occurrences.at(v1) += 1.0;
+        occurrences.at(v2) += 1.0;
+        occurrences.at(v3) += 1.0;
 
+        tmp.at(v1) += (5.0/8.0)*origVert.at(v1);
+        tmp.at(v2) += (5.0/8.0)*origVert.at(v2);
+        tmp.at(v3) += (5.0/8.0)*origVert.at(v3);
 
+        idxtype opv1;
+        idxtype opv2;
 
+        if (isBoundaryEdge(edge(v1,v2),origMesh,opv1,opv2)) {
+            tmp.at(v3) += (3.0/8.0)*(origVert.at(v1)+origVert.at(v2));
+        } else {
+            tmp.at(v3) += (3.0/16.0)*(origVert.at(v1)+origVert.at(v2));
+        }
 
+        if (isBoundaryEdge(edge(v1,v3),origMesh,opv1,opv2)) {
+            tmp.at(v2) += (3.0/8.0)*(origVert.at(v1)+origVert.at(v3));
+        } else {
+            tmp.at(v2) += (3.0/16.0)*(origVert.at(v1)+origVert.at(v3));
+        }
 
-
+        if (isBoundaryEdge(edge(v2,v3),origMesh,opv1,opv2)) {
+            tmp.at(v1) += (3.0/8.0)*(origVert.at(v3)+origVert.at(v2));
+        } else {
+            tmp.at(v1) += (3.0/16.0)*(origVert.at(v3)+origVert.at(v2));
+        }
 
     }
 
@@ -436,9 +479,11 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     //  To obtain the new vertices, divide each vertex by its occurrence value
     //*********************************************************************
 
+    unsigned int i;
+    for (i=0;i < origVert.size();i++)
     {
-//         assert( occurrences[i] != 0 );
-
+        assert( occurrences[i] != 0 );
+        destVert.at(i) = tmp.at(i)/occurrences.at(i);
     }
     //PRINTVAR(destVert);
 
@@ -451,18 +496,23 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     //  Recompute the normals for each face
     //*********************************************************************
 
+    for(face f : destMesh)    
+    
     {
         //*********************************************************************
         //  Calculate the normal of the triangles, it will be the same for each vertex
         //*********************************************************************
-
+        vec3d norm;
+        computeNormal(destNorm.at(f.v1), destNorm.at(f.v2), destNorm.at(f.v3), norm);
 
 
         //*********************************************************************
         // Sum the normal of the face to each vertex normal using the angleAtVertex as weight
         //*********************************************************************
 
-
+        destNorm.at(f.v1) += norm * angleAtVertex(destNorm.at(f.v1), destNorm.at(f.v2), destNorm.at(f.v3));
+        destNorm.at(f.v2) += norm * angleAtVertex(destNorm.at(f.v2), destNorm.at(f.v1), destNorm.at(f.v3));
+        destNorm.at(f.v3) += norm * angleAtVertex(destNorm.at(f.v3), destNorm.at(f.v2), destNorm.at(f.v1));
 
 
     }
@@ -470,7 +520,9 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     // normalize the normals of each vertex
     //*********************************************************************
 
-
+        for (vec3d v: destVert) {
+            v.normalize();
+        }
 
 
 
@@ -537,7 +589,7 @@ idxtype ObjModel::getNewVertex( const edge &e,
             // REMEMBER THAT IN THE CODE OPPV1 AND OPPV2 ARE INDICES, NOT VERTICES!!!
             //*********************************************************************
 
-            nvert = (3.0/8.0)*(vertList[e.first]+vertList[e.second]) + (1.0/8.0)*(vertList[oppV1] + vertList[oppV2]);
+            nvert = (3.0/8.0)*(vertList.at(e.first)+vertList.at(e.second)) + (1.0/8.0)*(vertList.at(oppV1) + vertList.at(oppV2));
         }
         else
         {
