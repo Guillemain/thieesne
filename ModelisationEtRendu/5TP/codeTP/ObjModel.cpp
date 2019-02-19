@@ -478,7 +478,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
 
 /**
  * For a given edge it returns the index of the new vertex created on its middle point. 
- * If such vertex already exists it just returns the its index; if it does not exist 
+ * If such vertex already exists it just returns its index; if it does not exist 
  * it creates it in vertList along it's normal and return the index
  * 
  * @param[in] e the edge
@@ -499,17 +499,19 @@ idxtype ObjModel::getNewVertex( const edge &e,
     //*********************************************************************
     // if the egde is NOT contained in the new vertex list (see EdgeList.contains() method)
     //*********************************************************************
+    if (!newVertList.contains(e))
 
     {
         //*********************************************************************
         // generate new index (vertex.size)
         //*********************************************************************
-
+        int index = vertList.size();
 
         //*********************************************************************
         // add the edge and index to the newVertList
         //*********************************************************************
 
+        newVertList.add(e,index);
 
         // generate new vertex
         point3d nvert;        //!< this will contain the new vertex
@@ -520,6 +522,8 @@ idxtype ObjModel::getNewVertex( const edge &e,
         // check if it is a boundary edge, ie check if there is another triangle
         // sharing this edge and if so get the index of its "opposite" vertex
         //*********************************************************************
+
+        if (!isBoundaryEdge(e,mesh,oppV1,oppV2)) 
 
         {
             // if it is not a boundary edge create the new vertex
@@ -533,25 +537,28 @@ idxtype ObjModel::getNewVertex( const edge &e,
             // REMEMBER THAT IN THE CODE OPPV1 AND OPPV2 ARE INDICES, NOT VERTICES!!!
             //*********************************************************************
 
-
+            nvert = (3.0/8.0)*(vertList[e.first]+vertList[e.second]) + (1.0/8.0)*(vertList[oppV1] + vertList[oppV2]);
         }
-//         else
+        else
         {
             //*********************************************************************
             // otherwise it is a boundary edge then the vertex is the linear combination of the
             // two extrema
             //*********************************************************************
 
+            nvert = (1.0/2.0)*(vertList[e.first]+vertList[e.second]);
         }
         //*********************************************************************
         // append the new vertex to the list of vertices
         //*********************************************************************
 
+        vertList.push_back(nvert);
 
         //*********************************************************************
         // return the index of the new vertex
         //*********************************************************************
 
+        return index;
 
     }
 //     else
@@ -561,7 +568,7 @@ idxtype ObjModel::getNewVertex( const edge &e,
         //*********************************************************************
         // get and return the index of the vertex
         //*********************************************************************
-
+        return newVertList.getIndex(e);
     }
 }
 
