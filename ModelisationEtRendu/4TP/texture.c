@@ -67,13 +67,16 @@ GLuint load_texture (char * ppm_file)
 	//**********************************
 	// load the texture from file, see load_ppm
 	//**********************************
+
+	image = load_ppm(ppm_file);
 	
+
 
 	//**********************************
 	// load the texture in opengl from "image"
 	//**********************************
-
-
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB, image->xd,image->yd,0,
+				GL_RGB, GL_UNSIGNED_BYTE, image->data);
 
 	return texture;
 }
@@ -85,16 +88,18 @@ void glRoom (GLdouble size)
 	//**********************************
 	// load the brick texture using load_texture and store it in texture2
 	//**********************************
-
+	texture2 = load_texture("textures/brique.ppm");
 
 	//**********************************
 	// bind the texture2
 	//**********************************
+	glBindTexture(GL_TEXTURE_2D, texture2);
 
 
 	//**********************************
 	// enable opengl texturing
 	//**********************************
+	glEnable(GL_TEXTURE_2D);
 
 
 	glBegin (GL_QUADS);
@@ -102,44 +107,47 @@ void glRoom (GLdouble size)
 		//**********************************
 		// BEFORE EACH vertex set the texture coordinates
 		//**********************************
-		glVertex3f (-v, -v, -v);
-		glVertex3f ( v, -v, -v);
-		glVertex3f ( v,  v, -v);
-		glVertex3f (-v,  v, -v);
+		glTexCoord2f(1.0, 0.0); glVertex3f (-v, -v, -v);
+		glTexCoord2f(0.0, 0.0); glVertex3f ( v, -v, -v);
+		glTexCoord2f(0.0, 1.0); glVertex3f ( v,  v, -v);
+		glTexCoord2f(1.0, 1.0); glVertex3f (-v,  v, -v);
 
 		glNormal3f ( 0,  0, -1);
-		glVertex3f ( v, -v, v);
-		glVertex3f (-v, -v, v);
-		glVertex3f (-v,  v, v);
-		glVertex3f ( v,  v, v);
+		glTexCoord2f(1.0, 0.0); glVertex3f ( v, -v, v);
+		glTexCoord2f(0.0, 0.0); glVertex3f (-v, -v, v);
+		glTexCoord2f(0.0, 1.0); glVertex3f (-v,  v, v);
+		glTexCoord2f(1.0, 1.0); glVertex3f ( v,  v, v);
 
 		glNormal3f ( -1, 0,  0);
-		glVertex3f ( v, -v, -v);
-		glVertex3f ( v, -v,  v);
-		glVertex3f ( v,  v,  v);
-		glVertex3f ( v,  v, -v);
+		glTexCoord2f(1.0, 0.0); glVertex3f ( v, -v, -v);
+		glTexCoord2f(0.0, 0.0); glVertex3f ( v, -v,  v);
+		glTexCoord2f(0.0, 1.0); glVertex3f ( v,  v,  v);
+		glTexCoord2f(1.0, 1.0); glVertex3f ( v,  v, -v);
 
 		glNormal3f ( 1,  0,  0);
-		glVertex3f (-v, -v,  v);
-		glVertex3f (-v, -v, -v);
-		glVertex3f (-v,  v, -v);
-		glVertex3f (-v,  v,  v);
+		glTexCoord2f(1.0, 0.0); glVertex3f (-v, -v,  v);
+		glTexCoord2f(0.0, 0.0); glVertex3f (-v, -v, -v);
+		glTexCoord2f(0.0, 1.0); glVertex3f (-v,  v, -v);
+		glTexCoord2f(1.0, 1.0); glVertex3f (-v,  v,  v);
 
 		glNormal3f ( 0, -1,  0);
-		glVertex3f (-v,  v, -v);
-		glVertex3f ( v,  v, -v);
-		glVertex3f ( v,  v,  v);
-		glVertex3f (-v,  v,  v);
+		glTexCoord2f(1.0, 0.0); glVertex3f (-v,  v, -v);
+		glTexCoord2f(0.0, 0.0); glVertex3f ( v,  v, -v);
+		glTexCoord2f(0.0, 1.0); glVertex3f ( v,  v,  v);
+		glTexCoord2f(1.0, 1.0); glVertex3f (-v,  v,  v);
 
 		glNormal3f ( 0,  1,  0);
-		glVertex3f (-v, -v, -v);
-		glVertex3f (-v, -v,  v);
-		glVertex3f ( v, -v,  v);
-		glVertex3f ( v, -v, -v);
+		glTexCoord2f(1.0, 0.0); glVertex3f (-v, -v, -v);
+		glTexCoord2f(0.0, 0.0); glVertex3f (-v, -v,  v);
+		glTexCoord2f(0.0, 1.0); glVertex3f ( v, -v,  v);
+		glTexCoord2f(1.0, 1.0); glVertex3f ( v, -v, -v);
 	glEnd();
+
 	//**********************************
-	// disable opengl texturing
+	// disable texturing
 	//**********************************
+	glFlush();
+    glDisable(GL_TEXTURE_2D);
 
 }
 
@@ -170,20 +178,24 @@ void init () {
 	// load the wood texture in texture
 	//**********************************
 
+	char* filename = "textures/bois.ppm";
+	texture = load_texture(filename);
 
 	//**********************************
 	// enable texture
 	//**********************************
-
+	//glGenTextures(1,&texture);
 
 	//**********************************
 	// enable cull face
 	//**********************************
-
+	glEnable(GL_CULL_FACE);
 
 	//**********************************
 	// enable depht test
 	//**********************************
+	glutInitDisplayMode( GLUT_RGB | GLUT_DEPTH);
+	glEnable(GL_DEPTH_TEST);
 
 }
 
@@ -206,25 +218,54 @@ void display ()
 	//**********************************
 	// bind the texture in texture (the wood texture)
 	//**********************************
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	//**********************************
 	// enable texturing
 	//**********************************
-
+	glEnable(GL_TEXTURE_2D);
 
 	//**********************************
 	// draw a simple square face of unitary size centered in (0,0,0)
 	//**********************************
-
-		//**********************************
-		// Before declaring each vertex give also the texture coordinates
-		//**********************************
-
+		glBegin(GL_QUADS);
+		glNormal3f ( 0,  0,  1);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, 0.0);
+		glTexCoord2f(0.0, 1.0); glVertex3f(1.0, -1.0, 0.0);
+		glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 1.0, 0.0);
+		glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, 1.0, 0.0);
+		//
+		// glTexCoord2f(0.0, 0.0); glVertex3f(-.5, .5, .5);
+   		// glTexCoord2f(0.0, 1.0); glVertex3f(-.5, .5, -.5);
+   		// glTexCoord2f(1.0, 1.0); glVertex3f(.5, .5, -.5);
+   		// glTexCoord2f(1.0, 0.0); glVertex3f(.5, .5, .5);
+		// //
+		// glTexCoord2f(0.0, 0.0); glVertex3f(-.5, .5, .5);
+   		// glTexCoord2f(0.0, 1.0); glVertex3f(-.5, -.5, .5);
+   		// glTexCoord2f(1.0, 1.0); glVertex3f(.5, -.5, .5);
+   		// glTexCoord2f(1.0, 0.0); glVertex3f(.5, .5, .5);
+		// //
+		// glTexCoord2f(0.0, 0.0); glVertex3f(-.5, .5, -.5);
+   		// glTexCoord2f(0.0, 1.0); glVertex3f(-.5, -.5, -.5);
+   		// glTexCoord2f(1.0, 1.0); glVertex3f(.5, -.5, -.5);
+   		// glTexCoord2f(1.0, 0.0); glVertex3f(.5, .5, -.5);
+		// //
+		// glTexCoord2f(0.0, 0.0); glVertex3f(-.5, .5, .5);
+   		// glTexCoord2f(0.0, 1.0); glVertex3f(-.5, .5, -.5);
+   		// glTexCoord2f(1.0, 1.0); glVertex3f(-.5, -.5, -.5);
+   		// glTexCoord2f(1.0, 0.0); glVertex3f(-.5, -.5, .5);
+		// //
+		// glTexCoord2f(0.0, 0.0); glVertex3f(.5, .5, .5);
+   		// glTexCoord2f(0.0, 1.0); glVertex3f(.5, .5, -.5);
+   		// glTexCoord2f(1.0, 1.0); glVertex3f(.5, -.5, -.5);
+   		// glTexCoord2f(1.0, 0.0); glVertex3f(.5, -.5, .5);
+	glEnd();
 
 	//**********************************
 	// disable texturing
 	//**********************************
-
+	glFlush();
+    glDisable(GL_TEXTURE_2D);
 
 	glutSwapBuffers ();
 }
