@@ -150,7 +150,7 @@ int main ( int argc, char * argv[] )
 
     /* define the projection transformation */
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    //glLoadIdentity();
     gluPerspective(60,1,1,100);
 
     /* define the viewing transformation */

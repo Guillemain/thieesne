@@ -7,7 +7,7 @@
 //#include 
 
 bool tea = true;
-double fouvy = 60;
+double fouvy = 80;
 double vx = 1.;
 // function called everytime the windows is refreshed
 void display () 
@@ -126,18 +126,18 @@ int main ( int argc, char * argv[] )
     // define the viewing transformation
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // gluLookAt(0.0,0.,-2.,
-    //             0.0,0.0,0.0,
-    //             1.0,1.0,0.0);
+    gluLookAt(0.0,0.,-2.,
+                0.0,0.0,0.0,
+                1.0,1.0,0.0);
     
     // gluLookAt(1.0,2.2,1.0,
     //             0.0,0.0,0.0,
     //             0.0,1.0,0.0);
     
    
-   gluLookAt(0.0,2.,0.,
-                0.0,0.0,0.0,
-                1.0,0.0,0.0);
+//    gluLookAt(0.0,0.0,1.0,
+//             0.0,0.0,0.0,
+//             0.0,1.0,0.0);
     
 
     // tell GLUT to wait for events 

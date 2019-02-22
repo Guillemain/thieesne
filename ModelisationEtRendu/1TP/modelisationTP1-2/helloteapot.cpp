@@ -16,9 +16,9 @@ void display ()
     // draw scene 
     //glutSolidTeapot(.5);
     if (tea){
-        glutWireTeapot(.5);
+        glutSolidTeapot(.5);
     }else{
-        glutWireSphere(.5,16,16);
+        glutWireSphere(.5,20,20);
     }
     
     // flush drawing routines to the window 

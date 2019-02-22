@@ -1,0 +1,140 @@
+
+
+1. Photo
+Il manque encore les ombres et le "specular"
+
+2. Photos
+
+
+3.
+Reshape : 
+
+void reshape ( int width, int height )
+{
+    float rat = std::min(width, height);
+    float ctr = std::max(width,height);
+    if (ctr == width){
+        glViewport((width - height)/2,0,rat,rat);
+    }else{
+        glViewport(0,(height - width)/2,rat,rat);
+    }
+    // define the viewport transformation;
+    //glViewport(0,0,rat,rat);
+
+}
+
+4.
+// In the key CallBack
+    if (tea){
+        glutSolidTeapot(.5);
+    }else{
+        glutWireSphere(.5,20,20);
+    }
+
+// In the display CallBack
+
+        case 'w':
+            tea = !tea;
+            break;
+    	// the 'esc' key
+
+5. Plus le fovy augmente plus la perspective semble aplatie et l'objet lontain.
+
+6. La teapot disparait. Car il n'y a pas de rendu entre la caméra et tout les objet situé à moins 2.1 d'elle.
+
+7. Cela retourne la caméra de 180 degré selon l'axe Camera-PointDuLookAt.
+Comme si on avait la tête en bas.
+
+8.
+
+// Vue de dessus :
+   gluLookAt(0.0,2.,0.,
+            0.0,0.0,0.0,
+            1.0,0.0,0.0);
+// Vue de travers :
+    gluLookAt(0.0,0.,-2.,
+              0.0,0.0,0.0,
+              1.0,1.0,0.0);
+
+TP2 :
+
+1. Les teapots se déplacent vers le bas. En fait on ne fait que des copies de matrice en se deplaçant de glTranslatef(0, -2, -1) à chaque display à chaque fois. Les effets du translate de la teapot bleue se cummulent.
+
+2. La teapot bleue nous apparait juste sous notre nez. 
+La raison est que le modification du look at a les mêmes effets qu'un translate. Il ne concerne donc que les teapot rouges et vertes.
+Car la teapot bleue est une copie dans la pile de la matrice où la caméra n'a pas effectuée le look at.
+
+3. Photos.
+
+4. 
+void keyX(int key, int x, int y )
+{
+    switch ( key )
+    {   
+        case GLUT_KEY_UP:
+            Tangage = Tangage + speedR;
+            break;
+        case GLUT_KEY_DOWN:
+            Tangage = Tangage - speedR;
+            break;
+        case GLUT_KEY_LEFT:
+            Lacet = Lacet - speedR;
+            break;
+        case GLUT_KEY_RIGHT:
+            Lacet = Lacet + speedR;
+            break;
+        default:
+            break;
+    }
+    glutPostRedisplay( );
+}
+
+void key( unsigned char key, int x, int y )
+{
+    switch ( key )
+    {   
+        case '4':
+            X = X - speedT;
+         break;
+        case '6':
+            X = X + speedT;
+         break;
+
+        case '8':
+            Y = Y - speedT;
+         break;
+
+        case '2':
+            Y = Y + speedT;
+         break;
+
+        case '+':
+            Z = Z + speedT;
+         break;
+
+        case '-':
+            Z = Z - speedT;
+         break;
+
+        case 27:
+            exit( EXIT_SUCCESS );
+            break;
+        default:
+            break;
+    }
+    glutPostRedisplay( );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
