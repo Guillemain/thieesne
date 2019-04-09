@@ -12,7 +12,7 @@ for i = 1:nb_images
     % L'ensemble des images de taille : nb_lignes x nb_colonnes x nb_canaux
     % x nb_images
     im(:,:,:,i) = imread(nom); 
-end;
+end
 % chargement des points 2D suivis
 % pts de taille nb_points x (2 x nb_images)
 % sur chaque ligne de pts 
