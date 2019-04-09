@@ -31,10 +31,14 @@ facteur_spatial = m/Seuil;
 Mx = [1:nx].*ones(nx,ny);
 My = [1:ny]'.*ones(nx,ny);
 
+
 %
 for k = 1:k_prime
-    d_temp = (I-I(centres(1,k),centres(2,k)))
+    d_temp = (I-I(centres(1,k),centres(2,k)));
     distance(:,:,k) = sqrt(d_temp(:,:,1).^2 + d_temp(:,:,2).^2 + d_temp(:,:,3).^2) + facteur_spatial* sqrt((centre(1,k) - Mx).^2 + (centre(2,k) - My).^2); 
+
 end
+Msq = min(distance,[],3);
+
 
 end
