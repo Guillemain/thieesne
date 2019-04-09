@@ -1,0 +1,12 @@
+Attention ! Il n'est pas obligatoire d'utiliser cette fonction.
+
+La fonction prend trois paramètres importants en entrée :
+
+    La distance utilisée pour trouver le centre le plus proche (la valeur par défaut étant la distance euclidienne).
+    Les positions initiales des centres, ou « germes » option start.
+    Ce qu'il faut faire dans le cas où une région devient vide (option emptyaction).
+
+Voici les éléments à prendre en compte pour réaliser la construction des superpixels en utilisant la fonction kmeans de matlab :
+
+    Pour initialiser les centres, utiliser l'option start.
+    Pour utiliser une distance comme dans l'approche SLIC, convertir l'image dans le système de représentation Lab puis modifier la manière de calculer la distance dans la fonction kmeans
