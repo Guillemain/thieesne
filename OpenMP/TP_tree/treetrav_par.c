@@ -23,8 +23,13 @@ void treetraverse_par(TreeNode *root, int nth){
     countnodes[i]=0;
 
   /* Start the tree traversal by calling the recursive routine */
+  #pragma omp parallel num_threads(nth) private(depth)
+  {
+  #pragma omp single 
+  {
   treetraverserec_par(root, depth);
-  
+  }
+  }
   return;
 
 }
@@ -44,19 +49,22 @@ void treetraverserec_par(TreeNode *root, int depth){
   double sum;
   int i, iam, it;
 
-
-  
   if(root->l != 1){
+
+    #pragma omp task if(depth < 2)
+    {
     /* If this node is not a leaf...*/
-
     /* ...visit the left subtree... */
-    treetraverserec_par(root->left, depth);
-
+    treetraverserec_par(root->left, depth+1);
+    }
+    #pragma omp task if(depth < 2)
+    {
     /* ...visit the right subtree... */
-    treetraverserec_par(root->right, depth);
-    
+    treetraverserec_par(root->right, depth+1);
+    }
     /* ...compute root->v as the sum of the v values on the left and
        right children... */
+    #pragma omp taskwait
     root->v += (root->right)->v + (root->left)->v;
   }
 
@@ -68,14 +76,11 @@ void treetraverserec_par(TreeNode *root, int depth){
     for(i=1; i<DATASIZE; i++)
       root->data[0] += root->data[i];
   
-  
   /* ...increment the counter of the number of nodes treated by the
      executing thread. */
   iam = 0;
   countnodes[iam] +=1;
-
   return;
-
 }
 
 
