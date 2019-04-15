@@ -75,6 +75,20 @@ R_2 = R^2; % On s'épargne des calculs en plus. Elude le calcul d'une racine car
 T = T_0;
 for q = 1:q_max
     % Naissance :
+    N_tilde = poissrnd(lambda);
+    X_nv = zeros(N,1);
+    Y_nv = zeros(N,1);
+    nvg_moyens_disques_nv = zeros(N,1);
+    for k = 1:N_tilde
+        abscisse_nouveau = nb_colonnes*rand;
+        ordonnee_nouveau = nb_lignes*rand;
+        %nvg_moyens_disques_nv(k) = nvg_moyen(abscisse_nouveau,ordonnee_nouveau,R,I);
+        X_nv(k) = abscisse_nouveau;
+        Y_nv(k) = ordonnee_nouveau;
+    end
+    X = [X ; X_nv];
+    Y = [Y ; Y_nv];
+    N = N +N_tilde;
     
     % 2.Mort 
     % 2.1 Tri des disques :
@@ -88,9 +102,12 @@ for q = 1:q_max
         Y_ss = Y;
         X_ss(k) = [];
         Y_ss(k) = [];
-        produit_temp = (Uad - beta * recouvrement(X_ss,Y_ss,X(k),Y(k))/T);
-        if(rand > (lambda/(lambda+exp(produit_temp))))
-            
+        x = X(k);
+        y = Y(k);
+        produit_temp = Uad-beta*(recouvrement(X_ss,Y_ss,x,y,R))/T;
+        if(rand() > (lambda/(lambda+exp(produit_temp))))
+            X = X_ss;
+            Y = Y_ss;
         end
     end
     
