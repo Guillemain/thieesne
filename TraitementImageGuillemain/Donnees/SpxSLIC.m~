@@ -2,7 +2,7 @@ function Msq = SpxSLIC(Image,K)
 %
 %
 
-m = 20;
+m = 10;
 Seuil = 10;
 
 % Le gradient de notre image.
@@ -50,7 +50,7 @@ facteur_spatial = m/Seuil;
 Mx = (1:nx)'.*ones(nx,ny);
 My = (1:ny).*ones(nx,ny);
 
-for q = 1:4
+for q = 1:
     for k = 1:k_prime
         d_temp = (I-(I(centres(1,k),centres(2,k),:)));
         distance(:,:,k) = sqrt(d_temp(:,:,1).^2 + d_temp(:,:,2).^2 + d_temp(:,:,3).^2) ...

@@ -1,0 +1,9 @@
+function Labeli = visualiseSPX(im,label)
+listeLabel = uniques(label);
+Labeli = zeros(size(im));
+for k = listeLabel
+    indice = label 
+end
+
+end
+
