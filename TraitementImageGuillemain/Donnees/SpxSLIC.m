@@ -1,9 +1,9 @@
-function [Msq,c] = SpxSLIC(Image,K)
+function Msq = SpxSLIC(Image,K)
 %
 %
 
-m = 0.1;
-Seuil = 1;
+m = 1000;
+Seuil = 10;
 
 % Le gradient de notre image.
 
@@ -11,8 +11,10 @@ Seuil = 1;
 % Le pas de la grille.
 S = floor(sqrt(size(Image,1)*size(Image,2)/K));
 I = Image(1:(size(Image,1)-mod(size(Image,1),S)),1:(size(Image,2)-mod(size(Image,2),S)),:); % on tronque l'image pour que ça se passe bien.
-
 centres = [];
+nb_spx = size(I,1)/S;
+nb_spy = size(I,2)/S;
+
 % Grad = derivees(I);
 % imshow(Grad)
 % for i = 1:S:size(I,1)-S
@@ -23,9 +25,18 @@ centres = [];
 %        centres = [centres [cx ; cy]];
 %    end
 % end
+
 S_2 = floor(S/2);
-centres = [S_2:S:900];
-centres = [centres;centres];
+for i = 1:nb_spx
+   for j = 1:nb_spy
+      centres = [centres [i*S_2;j*S_2]];
+   end
+end
+% 
+% centres = [S_2:S:K];
+% centres = [centres;centres];
+% 
+
 %
 k_prime = size(centres,2); % vrai nombre de classes
 [nx,ny,~] = size(I);
