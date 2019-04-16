@@ -1,4 +1,4 @@
-function Msq = SpxSLIC(Image,K)
+function [Msq,c] = SpxSLIC(Image,K)
 %
 %
 
@@ -32,8 +32,6 @@ for i = 1:nb_spx-1
       centres = [centres [i*S + S_2;j*S + S_2]];
    end
 end
-
-max(centres)
 % 
 % centres = [S_2:S:K];
 % centres = [centres;centres];
@@ -65,5 +63,6 @@ for q = 1:4
         end
     end
 end
-
+Msq = uint8(Msq);
+c = centres;
 end
