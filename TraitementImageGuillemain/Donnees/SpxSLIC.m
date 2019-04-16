@@ -2,8 +2,8 @@ function [Msq,c] = SpxSLIC(Image,K)
 %
 %
 
-m = 20;
-Seuil = 10;
+m = 8;
+Seuil = 1;
 
 % Le gradient de notre image.
 
