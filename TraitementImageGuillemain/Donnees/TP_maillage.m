@@ -1,5 +1,6 @@
 clear;
 close all;
+load('mask.mat', 'im_mask')
 nb_images = 36; % Nombre d'images
 
 % chargement des images
@@ -31,11 +32,11 @@ load dino_Ps;
 % ... 
 
 % Affichage des images
-figure; 
-subplot(2,2,1); imshow(im(:,:,:,1)); title('Image 1');
-subplot(2,2,2); imshow(im(:,:,:,9)); title('Image 9');
-subplot(2,2,3); imshow(im(:,:,:,17)); title('Image 17');
-subplot(2,2,4); imshow(im(:,:,:,25)); title('Image 25');
+% figure; 
+% subplot(2,2,1); imshow(im(:,:,:,1)); title('Image 1');
+% subplot(2,2,2); imshow(im(:,:,:,9)); title('Image 9');
+% subplot(2,2,3); imshow(im(:,:,:,17)); title('Image 17');
+% subplot(2,2,4); imshow(im(:,:,:,25)); title('Image 25');
 
 % Affichage des masques associes
 % figure;
@@ -73,47 +74,49 @@ end;
 fprintf('Calcul des points 3D termine : %d points trouves. \n',size(X,2));
 
 %affichage du nuage de points 3D
-figure;
-hold on;
-for i = 1:size(X,2)
-    plot3(X(1,i),X(2,i),X(3,i),'.','col',color(:,i)/255);
-end;
-axis equal;
+% figure;
+% hold on;
+% for i = 1:size(X,2)
+%     plot3(X(1,i),X(2,i),X(3,i),'.','col',color(:,i)/255);
+% end;
+% axis equal;
 
 % A COMPLETER
 % Tetraedrisation de Delaunay
-%T = 
+T = DelaunayTri(X(1:3,:)');
 
 % A DECOMMENTER POUR AFFICHER LE MAILLAGE
-% fprintf('Tetraedrisation terminee : %d tetraedres trouves. \n',size(T,1));
-% Affichage de la tetraedrisation de Delaunay
+fprintf('Tetraedrisation terminee : %d tetraedres trouves. \n',size(T,1));
+% %Affichage de la tetraedrisation de Delaunay
 % figure;
 % tetramesh(T);
 
 % A DECOMMENTER ET A COMPLETER
 
 % Calcul des barycentres de chacun des tetraedres
-% poids = ... 
-% nb_barycentres = ... 
-% for i = 1:size(T,1)
-    % Calcul des barycentres differents en fonction des poids differents
-    % En commencant par le barycentre avec poids uniformes
-%     C_g(:,i,1)=[ ...
-
+poids = [1/4,1/4,1/4,1/4];
+nb_barycentres = size(T,1);
+%C_g = zeros(nb_barycentres,3,1);
+for i = 1:nb_barycentres
+%     % Calcul des barycentres differents en fonction des poids differents
+%     % En commencant par le barycentre avec poids uniformes
+    C_g(:,i,1) = sum(poids'.*T.X(T.Triangulation(i,:)));
+end
 % A DECOMMENTER POUR VERIFICATION 
 % A RE-COMMENTER UNE FOIS LA VERIFICATION FAITE
 % Visualisation pour vérifier le bon calcul des barycentres
-% for i = 1:nb_images
-%    for k = 1:nb_barycentres
-%        o = P{i}*C_g(:,:,k);
-%        o = o./repmat(o(3,:),3,1);
-%        imshow(im_mask(:,:,i));
-%        hold on;
-%        plot(o(2,:),o(1,:),'rx');
-%        pause;
-%        close;
-%    end
-%end
+figure
+for i = 1:nb_images
+   for k = 1:nb_barycentres
+       o = P{i}*C_g(:,:,k);
+       o = o./repmat(o(3,:),3,1);
+       imshow(im_mask(:,:,i));
+       hold on;
+       plot(o(2,:),o(1,:),'rx');
+       pause;
+       close;
+   end
+end
 
 
 % A DECOMMENTER ET A COMPLETER

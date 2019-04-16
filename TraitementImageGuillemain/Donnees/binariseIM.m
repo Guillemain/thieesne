@@ -17,6 +17,7 @@ Teinte = Teinte(:);
 % Rotation vers le referenciel violet (parce que les angles c'est pas
 % linéaire
 %Teinte = mod(Teinte +20,360);
+
 %indice = kmeans(Teinte,2,'Replicates',10,'Start','cluster');
 indice = (Teinte < 0.4)+(Teinte > 0.9);
 for i = 1:3

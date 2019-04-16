@@ -45,10 +45,11 @@ k_prime = size(centres,2); % vrai nombre de classes
 Msq = zeros(nx,ny);
 distance = zeros(nx,ny,k_prime);
 facteur_spatial = m/Seuil;
+% Pour éviter de balayer tous les pixels.
 Mx = (1:nx)'.*ones(nx,ny);
 My = (1:ny).*ones(nx,ny);
 
-for q = 1:4
+for q = 1:10
     for k = 1:k_prime
         d_temp = (I-(I(centres(1,k),centres(2,k),:)));
         distance(:,:,k) = sqrt(d_temp(:,:,1).^2 + d_temp(:,:,2).^2 + d_temp(:,:,3).^2) ...

@@ -17,7 +17,7 @@ B = visualiseSPX(im,A,c);
 image(uint8(B));
 subplot(2,2,4);
 
-[i,M,T] = binariseIM(im,A,c);
+[~,M,~] = binariseIM(im,A,c);
 
 image(M)
 end
