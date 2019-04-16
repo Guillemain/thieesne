@@ -82,7 +82,7 @@ axis equal;
 
 % A COMPLETER
 % Tetraedrisation de Delaunay
-% T = ...
+%T = 
 
 % A DECOMMENTER POUR AFFICHER LE MAILLAGE
 % fprintf('Tetraedrisation terminee : %d tetraedres trouves. \n',size(T,1));

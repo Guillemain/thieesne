@@ -11,18 +11,18 @@ for k = listeLabel'
         M(:,:,i) = A;
     end
 end
-rgb2hsv(M); % Un mode de couleur plus cohérent ici.
-Teinte = M(:,:,1);
+T = rgb2hsv(M); % Un mode de couleur plus cohérent ici.
+Teinte = T(:,:,1); %voila.
 Teinte = Teinte(:);
 % Rotation vers le referenciel violet (parce que les angles c'est pas
 % linéaire
 %Teinte = mod(Teinte +20,360);
 %indice = kmeans(Teinte,2,'Replicates',10,'Start','cluster');
-indice = (Teinte < 80)+(Teinte > 250);
+indice = (Teinte < 0.4)+(Teinte > 0.9);
 for i = 1:3
     A = M(:,:,i);
-    A(indice==1) = uint8(0);
-    A(indice~=1) = uint8(255);
+    A(indice==1) = uint8(255);
+    A(indice~=1) = uint8(0);
     M(:,:,i) = A;
 end
 end
