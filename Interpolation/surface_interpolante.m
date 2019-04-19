@@ -1,18 +1,28 @@
-function C3D = surface_interpolante(Grille,t,s)
-%Fonction d'interpolation de surface, paramétré par t.
+function C3D = surface_interpolante(Grille,lenT,lenS)
+%Fonction d'interpolation de surface, paramétré par t et s.
 n = size(Grille,1);
 m = size(Grille,2);
-T = linspace(0,1,n);
-S = linspace(0,1,m);
 
-lenT = length(t);
-lenS = length(s);
+T = linspace(-1,1,lenT);
+S = linspace(-1,1,lenS);
+
+Si = cos((2*(0:n-1)+1)*pi/(2*n)); 
+Ti = cos((2*(0:m-1)+1)*pi/(2*m));
+
 
 C3D = zeros(lenS,lenT,3);
-for i = 1:lenS
-    for j = 1:lenT %% Première interpolation
-        for k = 1:3
-           C3D(:,:,k) = C3D + Grille(i,j,k).*ones(lenS,lenT).*Lagrange_coef(T,j,t);
+
+% C'est un exo bonus, je suis dans la légitimité de blasphèmer mon MATLAB.
+% En plus c'est parrallèlisable.
+% D'abord.
+for s = 1:lenS
+    for t = 1:lenT
+        for i = 1:n
+            LS = Lagrange_coef(Si,i,S(s));
+            for j = 1:m
+                LT = Lagrange_coef(Ti,j,T(t));
+                C3D(s,t,:) = C3D(s,t,:) + Grille(i,j,:).*LT.*LS;
+            end
         end
     end
 end

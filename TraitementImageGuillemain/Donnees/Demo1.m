@@ -1,4 +1,4 @@
-function [M,T] = Demo1(file,K)
+function [M,Mnb,T] = Demo1(file,K)
 im = imread(file);
 subplot(2,2,1);
 image(im);
@@ -17,7 +17,7 @@ B = visualiseSPX(im,A,c);
 image(uint8(B));
 subplot(2,2,4);
 
-[~,M,~] = binariseIM(im,A,c);
+[~,M,Mnb,T] = binariseIM(im,A,c);
 
 image(M)
 end

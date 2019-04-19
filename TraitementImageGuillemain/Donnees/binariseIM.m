@@ -1,4 +1,4 @@
-function [indice,M,Teinte] = binariseIM(im,label,c)
+function [indice,M,Mnb,Teinte] = binariseIM(im,label,c)
 listeLabel = unique(label);
 M = zeros(size(label,1),size(label,2),3);
 for k = listeLabel'
@@ -26,4 +26,6 @@ for i = 1:3
     A(indice~=1) = uint8(0);
     M(:,:,i) = A;
 end
+Mnb = M(:,:,1);
+Mnb(Mnb==255)=1;
 end

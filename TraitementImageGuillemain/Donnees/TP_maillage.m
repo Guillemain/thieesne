@@ -9,7 +9,7 @@ for i = 1:nb_images
         nom = sprintf('images/viff.00%d.ppm',i-1);
     else
         nom = sprintf('images/viff.0%d.ppm',i-1);
-    end;
+    end
     % L'ensemble des images de taille : nb_lignes x nb_colonnes x nb_canaux
     % x nb_images
     im(:,:,:,i) = imread(nom); 
@@ -74,12 +74,12 @@ end;
 fprintf('Calcul des points 3D termine : %d points trouves. \n',size(X,2));
 
 %affichage du nuage de points 3D
-% figure;
-% hold on;
-% for i = 1:size(X,2)
-%     plot3(X(1,i),X(2,i),X(3,i),'.','col',color(:,i)/255);
-% end;
-% axis equal;
+figure;
+hold on;
+for i = 1:size(X,2)
+    plot3(X(1,i),X(2,i),X(3,i),'.','col',color(:,i)/255);
+end;
+axis equal;
 
 % A COMPLETER
 % Tetraedrisation de Delaunay
@@ -94,18 +94,18 @@ fprintf('Tetraedrisation terminee : %d tetraedres trouves. \n',size(T,1));
 % A DECOMMENTER ET A COMPLETER
 
 % Calcul des barycentres de chacun des tetraedres
-poids = [1/4,1/4,1/4,1/4];
-nb_barycentres = size(T,1);
+poids = [1/4,1/4,1/4,1/4]';
+nb_barycentres = 1;
 %C_g = zeros(nb_barycentres,3,1);
-for i = 1:nb_barycentres
-%     % Calcul des barycentres differents en fonction des poids differents
+for i = 1:size(T,1)
+%     % Calcul des baryc
+
+%entres differents en fonction des poids differents
 %     % En commencant par le barycentre avec poids uniformes
-    C_g(:,i,1) = sum(poids'.*T.X(T.Triangulation(i,:)));
+    C_g(:,i,1) = [sum(poids.*T.X(T.Triangulation(i,:),:))';1];
 end
-% A DECOMMENTER POUR VERIFICATION 
-% A RE-COMMENTER UNE FOIS LA VERIFICATION FAITE
-% Visualisation pour vérifier le bon calcul des barycentres
-figure
+
+% % OK
 for i = 1:nb_images
    for k = 1:nb_barycentres
        o = P{i}*C_g(:,:,k);
@@ -121,18 +121,29 @@ end
 
 % A DECOMMENTER ET A COMPLETER
 % Copie de la triangulation pour pouvoir supprimer des tetraedres
-% tri=T.Triangulation;
+tri=T.Triangulation;
 % Retrait des tetraedres dont au moins un des barycentres 
 % ne se trouvent pas dans au moins un des masques des images de travail
 % Pour chaque barycentre
-% for k=1:nb_barycentres
-% ...
+indicesDeSuppr = zeros(1,size(tri,1));
+for i = 1:nb_images
+for k=1:nb_barycentres
+    o = P{i}*C_g(:,:,k);
+    o = o./repmat(o(3,:),3,1);
+    for j=1:size(tri,1)
+       if(im_mask(floor(o(1,j))+1,floor(o(2,j)+1),i)==0) % Ca coince l� et je sais pas pourquoi.
+          indicesDeSuppr(j)=1;
+       end
+    end
+end
+end
+tri(indicesDeSuppr)=[];
 
 % A DECOMMENTER POUR AFFICHER LE MAILLAGE RESULTAT
 % Affichage des tetraedres restants
-% fprintf('Retrait des tetraedres exterieurs a la forme 3D termine : %d tetraedres restants. \n',size(Tbis,1));
-% figure;
-% trisurf(tri,X(1,:),X(2,:),X(3,:));
+fprintf('Retrait des tetraedres exterieurs a la forme 3D termine : %d tetraedres restants. \n',size(tri,1));
+figure;
+trisurf(tri,X(1,:),X(2,:),X(3,:));
 
 % Sauvegarde des donnees
 % save donnees;
