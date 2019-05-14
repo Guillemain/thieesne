@@ -7,11 +7,11 @@ H = taille_ecran(4);
 load force_externe;
 
 % Parametres du modele :
-alpha = 0.001;				% Poids de la penalisation de la longueur
-beta = 0.0001;				% Poids de la penalisation de la courbure
+alpha = 0.01;				% Poids de la penalisation de la longueur
+beta = 0.001;				% Poids de la penalisation de la courbure
 
 % Parametre de la descente de gradient :
-gamma = 0.5;				% Pas de descente
+gamma = 0.3;				% Pas de descente
 nb_iterations_max = 500000;		% Nombre d'iterations maximal
 seuil_convergence = 5e-8;		% Critere d'arret sur l'ecart quadratique relatif entre deux affichages
 
@@ -31,6 +31,8 @@ colormap gray;
 axis image off;
 axis xy;
 hold on;
+
+filtre = fspecial('gaussian',T,sigma); 
 
 % Coordonnees initiales (x0,y0) du contour actif par clic de points :
 fprintf('Cliquez des points de controle initiaux puis tapez retour-chariot !\n');

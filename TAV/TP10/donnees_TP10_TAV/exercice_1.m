@@ -5,7 +5,7 @@ L = taille_ecran(3);
 H = taille_ecran(4);
 
 % Lecture et affichage de l'image a segmenter :
-I = imread('IRM.png');
+I = imread('coins.png');
 [nb_lignes,nb_colonnes,nb_canaux] = size(I);
 if nb_canaux==3
 	I = rgb2gray(I);
@@ -22,8 +22,8 @@ title('Image a segmenter','FontSize',20);
 	
 % Champ de force externe :
 % Noyau gaussien : 
-sigma = 5;
-T = 3*sigma;
+sigma = 3;
+T = ceil(3*sigma);
 filtre = fspecial('gaussian',T,sigma);
 
 [Ix,Iy] = gradient(conv2(I,filtre,'same'));

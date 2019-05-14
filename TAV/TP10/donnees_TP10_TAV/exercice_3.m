@@ -1,26 +1,23 @@
 clear;
+
+
+mu_GVF = 2;
+gamma_GVF = 0.2;
+
 close all;
 taille_ecran = get(0,'ScreenSize');
 L = taille_ecran(3);
 H = taille_ecran(4);
 
-mu_GVF = 2;
-gamma_GVF = .2;
+
 % Lecture et affichage de l'image a segmenter :
-I = imread('pears.png');
+I = imread('coins.png');
 [nb_lignes,nb_colonnes,nb_canaux] = size(I);
 if nb_canaux==3
 	I = rgb2gray(I);
 end
 I = double(I);
 I = I/max(I(:));
-figure('Name','Champ de force externe de base','Position',[0.05*L,0.05*H,0.9*L,0.7*H]);
-subplot(1,2,1);
-imagesc(I);
-colormap gray;
-axis image off;
-axis xy;
-title('Image a segmenter','FontSize',20);
 	
 % Champ de force externe :
 % Noyau gaussien : 
@@ -46,7 +43,7 @@ Fx_normalise = Fx./(norme+eps);
 Fy_normalise = Fy./(norme+eps);
 
 % Affichage du champ de force externe :
-subplot(1,2,2);
+
 imagesc(I);
 colormap gray;
 axis image off;
@@ -59,6 +56,6 @@ Fx_normalise_quiver = Fx_normalise(1:pas_fleches:nb_lignes,1:pas_fleches:nb_colo
 Fy_normalise_quiver = Fy_normalise(1:pas_fleches:nb_lignes,1:pas_fleches:nb_colonnes);
 hq = quiver(x,y,Fx_normalise_quiver,Fy_normalise_quiver,taille_fleches);
 set(hq,'LineWidth',1,'Color',[1,0,0]);
-title('Champ de force externe de base','FontSize',20);
+fig =  title('Champ de force externe de base','FontSize',20);
+saveas(fig,'test.png')
 
-save force_externe;
