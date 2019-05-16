@@ -58,7 +58,7 @@ u_k = u0;
 convergence = +Inf;
 iteration = 0;
 
-while convergence > 1e-3
+while iteration < 20%convergence > 1e-3
 	
 	% Incrementation du nombre d'iterations :
 	iteration = iteration + 1;
