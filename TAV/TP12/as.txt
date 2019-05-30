@@ -1,0 +1,23 @@
+    Transformation géométrique (3D à 3D dans le référentiel de la caméra.)
+    Projection sur le plan de la caméra,
+    Calibration (simple réhaussement)
+    Rasterisation et remplissage des face (2D -> espace de pixel) avec application des shaders Z-Buffering etc.
+
+
+D'après le théorème de Thalès, on a une relation de proportionalité entre notre objet et sa projection
+
+On pourrait multiplier (x,y,z)' par la matrice :
+
+[ f 0  w/(2*z)
+
+  0 f  h/(2*z)]
+
+En pratique on ne divise qu'après par z et on a une ligne de plus sur la matrice pour conserver la profondeur pour le Z-Buffering.
+
+
+Le moteur ne fonctionne pas par jeté de rayon (trop couteux) ainsi on doit "déssiner" toutes les faces de la scène (nous faisant face) et décider quel fragment du model doit être rendu en fonction de s'il y a un fragment d'un autre objet déja rendu qui l'occulte dans la scène. Autrement dit on se sert du ZBuffer pour vérifier s'il ya quelque chose devant ce pixel.
+A une coordonée (x,y) donné on enregistre la valeur de la profondeur (usuellement en 1/z pour avoir plus de précision lorsqu'on est proche de la caméra, mais ce n'est pas le cas de ces Tps) du fragment rendu. Lorsqu'on souhaite rendre un fragment en (x,y) on compare sa valeur de profondeur par rapport à celle du Buffer pour voir s'il est occulté.
+
+L'éclairage de Gouraud permet de rendre la lumière uniquement sur les vertices et d'interpoler celle-là sur le reste de la face (peut couteux)
+
+L'éclairage de Phong demande d'interpoller les normales au préalable pour rendre la lumière qu'il diffuse (sa couleur quoi) ainsi que le spéculaire le "reflet". Cet algorithme est un peu plus couteux. 
